@@ -4,6 +4,7 @@ from src.auth import require_login, get_user_id
 from src.db.supabase_client import get_supabase
 from src.db.supabase_client import get_supabase
 from src.db.category import get_categories
+from tabs import tab_record_add, tab_record_list, tab_store, tab_analysis
 
 
 st.set_page_config(
