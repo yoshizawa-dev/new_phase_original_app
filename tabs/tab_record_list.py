@@ -4,14 +4,13 @@ from src.db.supabase_client import get_supabase
 
 def render(CATEGORIES: dict):
     st.subheader("記録一覧")
-
     supabase = get_supabase()
 
     try:
         res = (
             supabase.table("post")
             .select(
-                "post_id, item_name, visit_date, rating, price, comment, category_id, "
+                "post_id, item_name, visit_date, rating, price, comment, category_id, image_path,"
                 "store(store_name)"
             )
             .order("visit_date", desc=True)
@@ -57,9 +56,24 @@ def render(CATEGORIES: dict):
 
     category_names = {v: k for k, v in CATEGORIES.items()}
     cols = st.columns(3)
+
+# 1. バケット名の手前までのURLにする
+    BASE_STORAGE_URL = "https://coxtvfeghmlvdrmgrlzf.supabase.co/storage/v1/object/public"
+
     for i, post in enumerate(filtered):
         with cols[i % 3]:
             with st.container(border=True):
+                img_path = post.get("image_path")
+
+                if img_path and str(img_path).strip():
+                    full_url = f"{BASE_STORAGE_URL}/{str(img_path).strip()}" 
+                    try:
+                        st.image(full_url, use_container_width=True)
+                    except Exception as e:
+                        st.warning(f"画像を読み込めませんでした")
+                else:
+                    st.info("画像データがありません")
+
                 st.markdown(f"### {post['item_name']}")
                 st.markdown(f"🏪 {post['store']['store_name']}")
                 st.markdown(f"🗓️ {post['visit_date']}")
