@@ -55,13 +55,12 @@ def _render_card(post: dict, category_names: dict, show_score: bool = False):
 
         st.markdown(f"### {post['item_name']}")
 
-        # store は dict（記録一覧）または str（検索結果）の両方に対応
-        store = post.get("store") or {}
-        store_name = (
-            store.get("store_name", "")
-            if isinstance(store, dict)
-            else post.get("store_name", "")
-        )
+        # 検索結果は store_name キーに直接入っている
+        # 通常一覧は store キー（dict）経由で取得する
+        store_name = post.get("store_name", "")
+        if not store_name:
+            store = post.get("store") or {}
+            store_name = store.get("store_name", "")
         st.markdown(f"🏪 {store_name}")
         st.markdown(f"🗓️ {post.get('visit_date', '')}")
 
@@ -115,6 +114,12 @@ def render(CATEGORIES: dict):
             return
 
         st.markdown(f"**「{query}」の検索結果：{len(results)} 件**（関連度順）")
+
+        # ── デバッグ用（確認後に削除） ──
+        if results:
+            with st.expander("🐛 デバッグ：検索結果の生データ（先頭1件）"):
+                st.json(results[0])
+        # ────────────────────────────────
 
         category_names = {v: k for k, v in CATEGORIES.items()}
         cols = st.columns(3)
