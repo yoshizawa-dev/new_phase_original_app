@@ -115,12 +115,6 @@ def render(CATEGORIES: dict):
 
         st.markdown(f"**「{query}」の検索結果：{len(results)} 件**（関連度順）")
 
-        # ── デバッグ用（確認後に削除） ──
-        if results:
-            with st.expander("🐛 デバッグ：検索結果の生データ（先頭1件）"):
-                st.json(results[0])
-        # ────────────────────────────────
-
         category_names = {v: k for k, v in CATEGORIES.items()}
         cols = st.columns(3)
         for i, post in enumerate(results):
